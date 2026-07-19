@@ -21,7 +21,6 @@ public class GetPlayMarketAppsQueryHandlerTests
     [Test]
     public async Task Handle_ValidQuery_DelegatesToClientAndReturnsResult()
     {
-        // Arrange
         var expectedApps = new List<PlayMarketApp>
         {
             new() { PackageName = "com.test.app1", Rank = 1 },
@@ -34,27 +33,22 @@ public class GetPlayMarketAppsQueryHandlerTests
 
         var query = new GetPlayMarketAppsQuery("poker", "us");
 
-        // Act
         var result = await _handler.Handle(query, CancellationToken.None);
 
-        // Assert
         Assert.That(result, Is.SameAs(expectedApps));
     }
 
     [Test]
     public async Task Handle_ValidQuery_CallsSearchAppsAsyncExactlyOnce()
     {
-        // Arrange
         _clientMock
             .Setup(c => c.SearchAppsAsync("chess", "de", It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<PlayMarketApp>());
 
         var query = new GetPlayMarketAppsQuery("chess", "de");
 
-        // Act
         await _handler.Handle(query, CancellationToken.None);
 
-        // Assert
         _clientMock.Verify(
             c => c.SearchAppsAsync("chess", "de", It.IsAny<CancellationToken>()),
             Times.Once);
@@ -63,7 +57,6 @@ public class GetPlayMarketAppsQueryHandlerTests
     [Test]
     public async Task Handle_ValidQuery_PassesCorrectKeywordAndCountry()
     {
-        // Arrange
         string capturedKeyword = null!;
         string capturedCountry = null!;
 
@@ -79,10 +72,8 @@ public class GetPlayMarketAppsQueryHandlerTests
 
         var query = new GetPlayMarketAppsQuery("racing", "ru");
 
-        // Act
         await _handler.Handle(query, CancellationToken.None);
 
-        // Assert
         Assert.That(capturedKeyword, Is.EqualTo("racing"));
         Assert.That(capturedCountry, Is.EqualTo("ru"));
     }
@@ -90,7 +81,6 @@ public class GetPlayMarketAppsQueryHandlerTests
     [Test]
     public async Task Handle_ClientReturnsEmpty_ReturnsEmptyList()
     {
-        // Arrange
         _clientMock
             .Setup(c => c.SearchAppsAsync(
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -98,10 +88,8 @@ public class GetPlayMarketAppsQueryHandlerTests
 
         var query = new GetPlayMarketAppsQuery("nonexistent", "us");
 
-        // Act
         var result = await _handler.Handle(query, CancellationToken.None);
 
-        // Assert
         Assert.That(result, Is.Empty);
     }
 }

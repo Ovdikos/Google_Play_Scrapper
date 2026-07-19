@@ -6,9 +6,7 @@ using PlayMarketScraper.Core.Exceptions;
 using PlayMarketScraper.Infrastructure;
 using Spectre.Console;
 
-// ──────────────────────────────────────────────
-// 1. Composition Root — wire all layers via DI
-// ──────────────────────────────────────────────
+// Composition Root
 var services = new ServiceCollection()
     .AddApplication()
     .AddInfrastructure()
@@ -16,9 +14,7 @@ var services = new ServiceCollection()
 
 var mediator = services.GetRequiredService<IMediator>();
 
-// ──────────────────────────────────────────────
-// 2. Welcome Banner
-// ──────────────────────────────────────────────
+// Welcome Banner
 AnsiConsole.Write(
     new FigletText("Play Scraper")
         .Centered()
@@ -30,15 +26,11 @@ AnsiConsole.Write(
 
 AnsiConsole.WriteLine();
 
-// ──────────────────────────────────────────────
-// 3. User Input
-// ──────────────────────────────────────────────
+// User Input
 var keyword = AnsiConsole.Ask<string>("[green]Search keyword:[/]");
-var country = AnsiConsole.Ask<string>("[green]Country code[/] [dim](e.g. us, ru, de):[/]");
+var country = AnsiConsole.Ask<string>("[green]Country code[/] [dim](e.g. ua, us, de, pl, ru):[/]");
 
-// ──────────────────────────────────────────────
-// 4. Execute Query with Spinner
-// ──────────────────────────────────────────────
+// Execute Query with Spinner
 try
 {
     var apps = await AnsiConsole.Status()
@@ -50,9 +42,7 @@ try
             return await mediator.Send(new GetPlayMarketAppsQuery(keyword, country));
         });
 
-    // ──────────────────────────────────────────
-    // 5. Display Results
-    // ──────────────────────────────────────────
+    // Results
     AnsiConsole.WriteLine();
 
     if (apps.Count == 0)
@@ -80,8 +70,17 @@ try
 catch (PlayMarketScrapingException ex)
 {
     AnsiConsole.WriteLine();
-    AnsiConsole.MarkupLine("[red bold]✗ Scraping Error[/]");
-    AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+    AnsiConsole.MarkupLine($"[red bold]✗ Scraping Error:[/] {ex.Message}");
+}
+catch (TaskCanceledException ex)
+{
+    AnsiConsole.WriteLine();
+    AnsiConsole.MarkupLine($"[red bold]✗ Timeout Error:[/] {ex.Message}");
+}
+catch (TimeoutException ex)
+{
+    AnsiConsole.WriteLine();
+    AnsiConsole.MarkupLine($"[red bold]✗ Timeout Error:[/] {ex.Message}");
 }
 catch (Exception ex)
 {
