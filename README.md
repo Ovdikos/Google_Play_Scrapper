@@ -1,11 +1,11 @@
 # Google Play Market Scraper
 
-A modern, fast, and robust .NET 8 Console Application built with Clean Architecture that scrapes Android application package names from the Google Play Store search results.
+A modern, fast, and robust .NET 10 Console Application built with Clean Architecture that scrapes Android application package names from the Google Play Store search results.
 
 It strictly uses the internal Google Play `batchexecute` API via HTTP POST requests instead of parsing HTML, providing fast and reliable extraction.
 
 ## Prerequisites
-* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or higher
+* [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or higher
 
 ## Architecture
 The project follows Clean Architecture principles:
