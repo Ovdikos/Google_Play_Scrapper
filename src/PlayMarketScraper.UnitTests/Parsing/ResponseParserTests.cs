@@ -14,12 +14,10 @@ public class ResponseParserTests
     }
 
     [Test]
-    public void Parse_ValidHtmlResponse_ExtractsPackageNamesInOrder()
+    public void Parse_ValidResponse_ExtractsPackageNamesInOrder()
     {
         var fakeResponse = """
-            <a href="/store/apps/details?id=com.first.app">App 1</a>
-            <a href="/store/apps/details?id=com.second.app">App 2</a>
-            <a href="/store/apps/details?id=com.third.app">App 3</a>
+            [["wrb.fr","lGYRle","[[[\"com.first.app\",7],[null,2,[512,512]]],[[[\"com.second.app\",7],[null,2,[512,512]]],[[[\"com.third.app\",7],[null,2,[512,512]]]
             """;
 
         var result = _parser.Parse(fakeResponse);
@@ -34,11 +32,11 @@ public class ResponseParserTests
     public void Parse_DuplicatePackages_RemovesDuplicatesPreservingFirstOccurrence()
     {
         var fakeResponse = """
-            <a href="/store/apps/details?id=com.alpha.app"></a>
-            <a href="/store/apps/details?id=com.beta.app"></a>
-            <a href="/store/apps/details?id=com.alpha.app"></a>
-            <a href="/store/apps/details?id=com.gamma.app"></a>
-            <a href="/store/apps/details?id=com.beta.app"></a>
+            ["com.alpha.app",7]
+            ["com.beta.app",7]
+            ["com.alpha.app",7]
+            ["com.gamma.app",7]
+            ["com.beta.app",7]
             """;
 
         var result = _parser.Parse(fakeResponse);
@@ -53,9 +51,9 @@ public class ResponseParserTests
     public void Parse_ValidResponse_AssignsSequentialRankStartingFromOne()
     {
         var fakeResponse = """
-            /store/apps/details?id=com.app.one
-            /store/apps/details?id=com.app.two
-            /store/apps/details?id=com.app.three
+            ["com.app.one",7]
+            ["com.app.two",7]
+            ["com.app.three",7]
             """;
 
         var result = _parser.Parse(fakeResponse);
@@ -69,9 +67,9 @@ public class ResponseParserTests
     public void Parse_DuplicatePackages_RankSkipsDuplicates()
     {
         var fakeResponse = """
-            /store/apps/details?id=com.dup.app
-            /store/apps/details?id=com.unique.app
-            /store/apps/details?id=com.dup.app
+            ["com.dup.app",7]
+            ["com.unique.app",7]
+            ["com.dup.app",7]
             """;
 
         var result = _parser.Parse(fakeResponse);
@@ -84,7 +82,7 @@ public class ResponseParserTests
     [Test]
     public void Parse_NoMatches_ReturnsEmptyList()
     {
-        var fakeResponse = "<html><body>No apps here</body></html>";
+        var fakeResponse = "[\"invalid_app_name\",7] <html><body>No apps here</body></html>";
 
         var result = _parser.Parse(fakeResponse);
 
@@ -100,13 +98,13 @@ public class ResponseParserTests
     }
 
     [Test]
-    public void Parse_UnicodeEncodedEquals_ExtractsPackageName()
+    public void Parse_EscapedQuotes_ExtractsPackageName()
     {
-        var fakeResponse = @"/store/apps/details?id\u003dcom.unicode.app";
+        var fakeResponse = @"[\""com.escaped.app\"",7]";
 
         var result = _parser.Parse(fakeResponse);
 
         Assert.That(result, Has.Count.EqualTo(1));
-        Assert.That(result[0].PackageName, Is.EqualTo("com.unicode.app"));
+        Assert.That(result[0].PackageName, Is.EqualTo("com.escaped.app"));
     }
 }
