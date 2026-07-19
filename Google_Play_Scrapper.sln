@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayMarketScraper.Core", "src\PlayMarketScraper.Core\PlayMarketScraper.Core.csproj", "{99D0CFA3-73F3-4919-9964-5C556104C715}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayMarketScraper.Infrastructure", "src\PlayMarketScraper.Infrastructure\PlayMarketScraper.Infrastructure.csproj", "{58E0106A-8D8A-4417-9443-B44BBFBD6252}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayMarketScraper.Application", "src\PlayMarketScraper.Application\PlayMarketScraper.Application.csproj", "{03BD310B-BEC5-4F12-AE98-2966C32B22E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayMarketScraper.Console", "src\PlayMarketScraper.Console\PlayMarketScraper.Console.csproj", "{0651A994-546B-4DD2-9D80-3EC27295F123}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayMarketScraper.UnitTests", "src\PlayMarketScraper.UnitTests\PlayMarketScraper.UnitTests.csproj", "{59C086A8-4F3E-4407-8181-720C9BF30732}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99D0CFA3-73F3-4919-9964-5C556104C715}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99D0CFA3-73F3-4919-9964-5C556104C715}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99D0CFA3-73F3-4919-9964-5C556104C715}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99D0CFA3-73F3-4919-9964-5C556104C715}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58E0106A-8D8A-4417-9443-B44BBFBD6252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58E0106A-8D8A-4417-9443-B44BBFBD6252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58E0106A-8D8A-4417-9443-B44BBFBD6252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58E0106A-8D8A-4417-9443-B44BBFBD6252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03BD310B-BEC5-4F12-AE98-2966C32B22E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03BD310B-BEC5-4F12-AE98-2966C32B22E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03BD310B-BEC5-4F12-AE98-2966C32B22E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03BD310B-BEC5-4F12-AE98-2966C32B22E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0651A994-546B-4DD2-9D80-3EC27295F123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0651A994-546B-4DD2-9D80-3EC27295F123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0651A994-546B-4DD2-9D80-3EC27295F123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0651A994-546B-4DD2-9D80-3EC27295F123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59C086A8-4F3E-4407-8181-720C9BF30732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59C086A8-4F3E-4407-8181-720C9BF30732}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59C086A8-4F3E-4407-8181-720C9BF30732}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59C086A8-4F3E-4407-8181-720C9BF30732}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
