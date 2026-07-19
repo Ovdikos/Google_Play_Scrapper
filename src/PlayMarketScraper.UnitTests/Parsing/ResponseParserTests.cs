@@ -14,21 +14,16 @@ public class ResponseParserTests
     }
 
     [Test]
-    public void Parse_ValidResponse_ExtractsPackageNamesInOrder()
+    public void Parse_ValidHtmlResponse_ExtractsPackageNamesInOrder()
     {
-        // Arrange
         var fakeResponse = """
-            )]}'
-
-            some data id=com.first.app more data
-            some data id=com.second.app more data
-            some data id\u003dcom.third.app more data
+            <a href="/store/apps/details?id=com.first.app">App 1</a>
+            <a href="/store/apps/details?id=com.second.app">App 2</a>
+            <a href="/store/apps/details?id=com.third.app">App 3</a>
             """;
 
-        // Act
         var result = _parser.Parse(fakeResponse);
 
-        // Assert
         Assert.That(result, Has.Count.EqualTo(3));
         Assert.That(result[0].PackageName, Is.EqualTo("com.first.app"));
         Assert.That(result[1].PackageName, Is.EqualTo("com.second.app"));
@@ -38,19 +33,16 @@ public class ResponseParserTests
     [Test]
     public void Parse_DuplicatePackages_RemovesDuplicatesPreservingFirstOccurrence()
     {
-        // Arrange
         var fakeResponse = """
-            )]}'
-
-            id=com.alpha.app data id=com.beta.app data
-            id=com.alpha.app data id=com.gamma.app data
-            id=com.beta.app data
+            <a href="/store/apps/details?id=com.alpha.app"></a>
+            <a href="/store/apps/details?id=com.beta.app"></a>
+            <a href="/store/apps/details?id=com.alpha.app"></a>
+            <a href="/store/apps/details?id=com.gamma.app"></a>
+            <a href="/store/apps/details?id=com.beta.app"></a>
             """;
 
-        // Act
         var result = _parser.Parse(fakeResponse);
 
-        // Assert
         Assert.That(result, Has.Count.EqualTo(3));
         Assert.That(result[0].PackageName, Is.EqualTo("com.alpha.app"));
         Assert.That(result[1].PackageName, Is.EqualTo("com.beta.app"));
@@ -60,13 +52,14 @@ public class ResponseParserTests
     [Test]
     public void Parse_ValidResponse_AssignsSequentialRankStartingFromOne()
     {
-        // Arrange
-        var fakeResponse = "id=com.app.one data id=com.app.two data id=com.app.three";
+        var fakeResponse = """
+            /store/apps/details?id=com.app.one
+            /store/apps/details?id=com.app.two
+            /store/apps/details?id=com.app.three
+            """;
 
-        // Act
         var result = _parser.Parse(fakeResponse);
 
-        // Assert
         Assert.That(result[0].Rank, Is.EqualTo(1));
         Assert.That(result[1].Rank, Is.EqualTo(2));
         Assert.That(result[2].Rank, Is.EqualTo(3));
@@ -75,13 +68,14 @@ public class ResponseParserTests
     [Test]
     public void Parse_DuplicatePackages_RankSkipsDuplicates()
     {
-        // Arrange — "com.dup.app" appears twice, rank should be 1, 2 (not 1, 2, 3)
-        var fakeResponse = "id=com.dup.app data id=com.unique.app data id=com.dup.app";
+        var fakeResponse = """
+            /store/apps/details?id=com.dup.app
+            /store/apps/details?id=com.unique.app
+            /store/apps/details?id=com.dup.app
+            """;
 
-        // Act
         var result = _parser.Parse(fakeResponse);
 
-        // Assert
         Assert.That(result, Has.Count.EqualTo(2));
         Assert.That(result[0].Rank, Is.EqualTo(1));
         Assert.That(result[1].Rank, Is.EqualTo(2));
@@ -90,38 +84,29 @@ public class ResponseParserTests
     [Test]
     public void Parse_NoMatches_ReturnsEmptyList()
     {
-        // Arrange
-        var fakeResponse = ")]}'\n\nno package names here at all";
+        var fakeResponse = "<html><body>No apps here</body></html>";
 
-        // Act
         var result = _parser.Parse(fakeResponse);
 
-        // Assert
         Assert.That(result, Is.Empty);
     }
 
     [Test]
     public void Parse_EmptyString_ReturnsEmptyList()
     {
-        // Act
         var result = _parser.Parse(string.Empty);
 
-        // Assert
         Assert.That(result, Is.Empty);
     }
 
     [Test]
-    public void Parse_BothIdFormats_ExtractsFromBothEqualsAndUnicode()
+    public void Parse_UnicodeEncodedEquals_ExtractsPackageName()
     {
-        // Arrange — mix of id= and id\u003d (URL-encoded '=')
-        var fakeResponse = "id=com.equals.app data id\\u003dcom.unicode.app";
+        var fakeResponse = @"/store/apps/details?id\u003dcom.unicode.app";
 
-        // Act
         var result = _parser.Parse(fakeResponse);
 
-        // Assert
-        Assert.That(result, Has.Count.EqualTo(2));
-        Assert.That(result[0].PackageName, Is.EqualTo("com.equals.app"));
-        Assert.That(result[1].PackageName, Is.EqualTo("com.unicode.app"));
+        Assert.That(result, Has.Count.EqualTo(1));
+        Assert.That(result[0].PackageName, Is.EqualTo("com.unicode.app"));
     }
 }

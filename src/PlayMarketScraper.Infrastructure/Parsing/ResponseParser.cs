@@ -7,7 +7,7 @@ namespace PlayMarketScraper.Infrastructure.Parsing;
 public sealed class ResponseParser : IResponseParser
 {
     private static readonly Regex PackageNameRegex = new(
-        @"(?<=id(=|\\u003d))([a-zA-Z0-9_.]+)",
+        @"\[\\?""([a-zA-Z0-9_.-]+)\\?"",\s*\d+\]",
         RegexOptions.Compiled);
 
     public IReadOnlyList<PlayMarketApp> Parse(string responseBody)
@@ -17,15 +17,18 @@ public sealed class ResponseParser : IResponseParser
 
         foreach (Match match in PackageNameRegex.Matches(responseBody))
         {
-            var packageName = match.Groups[2].Value;
+            var packageName = match.Groups[1].Value;
 
-            if (seen.Add(packageName))
+            if (packageName.Contains('.') && !packageName.Contains(' '))
             {
-                result.Add(new PlayMarketApp
+                if (seen.Add(packageName))
                 {
-                    PackageName = packageName,
-                    Rank = result.Count + 1
-                });
+                    result.Add(new PlayMarketApp
+                    {
+                        PackageName = packageName,
+                        Rank = result.Count + 1
+                    });
+                }
             }
         }
 
